@@ -468,5 +468,14 @@ if __name__ == "__main__":
         db.create_all()
         init_db()
         db.session.commit()
-            
-    app.run(debug=True)
+    
+    # Get port from environment variable or default to 5000 for local development
+    port = int(os.environ.get("PORT", 5000))
+    
+    # Run the app - use 0.0.0.0 for Render, 127.0.0.1 for local
+    if os.environ.get("RENDER"):
+        # Production on Render
+        app.run(host="0.0.0.0", port=port, debug=False)
+    else:
+        # Local development
+        app.run(host="127.0.0.1", port=port, debug=True)
