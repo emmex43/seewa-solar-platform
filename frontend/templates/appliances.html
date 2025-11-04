@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEEWA - Appliances Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+            color: #2E8B57 !important;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #2E8B57;
+            border-color: #2E8B57;
+        }
+        .energy-badge {
+            background-color: #2E8B57;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            border-top: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="/">🌞 SEEWA</a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/calculator">Solar Calculator</a>
+            {% if current_user.is_authenticated %}
+                <a class="nav-link" href="/projects">Projects</a>
+                <a class="nav-link" href="/appliances">Appliances</a>
+                <a class="nav-link" href="/analytics">Analytics</a>
+                <a class="nav-link" href="/logout">Logout ({{ current_user.username }})</a>
+            {% else %}
+                <a class="nav-link" href="/login">Login</a>
+                <a class="nav-link" href="/register">Register</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Appliances Energy Calculator</h1>
+        <p class="lead">Manage your appliances and calculate their energy consumption</p>
+        
+        <!-- Add Appliance Form -->
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Add New Appliance</h5>
+            </div>
+            <div class="card-body">
+                <form id="addApplianceForm">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="applianceName" placeholder="Appliance Name" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" class="form-control" id="appliancePower" placeholder="Power (Watts)" min="1" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" class="form-control" id="applianceHours" placeholder="Hours per Day" min="0.1" step="0.1" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Appliances Table -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Your Appliances</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="appliancesTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Appliance Name</th>
+                                <th>Power (W)</th>
+                                <th>Hours/Day</th>
+                                <th>Daily Energy (kWh)</th>
+                                <th>Monthly Energy (kWh)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appliancesTableBody">
+                            <!-- Appliances will be loaded here -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-success">
+                                <td colspan="4"><strong>Total Consumption</strong></td>
+                                <td id="totalDaily">0 kWh</td>
+                                <td id="totalMonthly">0 kWh</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Reference -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Common Nigerian Household Appliances</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Lighting</h6>
+                        <ul>
+                            <li>LED Bulb: 10-15W</li>
+                            <li>Fluorescent Tube: 20-40W</li>
+                            <li>Energy Saver Bulb: 15-25W</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Kitchen Appliances</h6>
+                        <ul>
+                            <li>Refrigerator: 100-200W</li>
+                            <li>Blender: 300-500W</li>
+                            <li>Electric Kettle: 1500-2000W</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Entertainment</h6>
+                        <ul>
+                            <li>TV (LED): 50-100W</li>
+                            <li>Decoder: 15-30W</li>
+                            <li>Home Theater: 50-200W</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Comfort</h6>
+                        <ul>
+                            <li>Ceiling Fan: 50-75W</li>
+                            <li>Standing Fan: 30-50W</li>
+                            <li>AC Unit: 1000-2000W</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap & JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        class AppliancesManager {
+            constructor() {
+                this.apiBase = '/api';
+                this.init();
+            }
+
+            init() {
+                this.loadAppliances();
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                document.getElementById('addApplianceForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addAppliance();
+                });
+            }
+
+            async loadAppliances() {
+                try {
+                    const response = await fetch(`${this.apiBase}/appliances`);
+                    const data = await response.json();
+                    this.renderAppliances(data);
+                } catch (error) {
+                    console.error('Error loading appliances:', error);
+                    this.showAlert('Error loading appliances', 'danger');
+                }
+            }
+
+            renderAppliances(appliances) {
+                const tbody = document.getElementById('appliancesTableBody');
+                tbody.innerHTML = '';
+
+                let totalDaily = 0;
+                let totalMonthly = 0;
+
+                appliances.forEach(appliance => {
+                    const row = document.createElement('tr');
+                    
+                    const dailyEnergy = (appliance.power_watt * appliance.hours_per_day) / 1000;
+                    const monthlyEnergy = dailyEnergy * 30;
+                    
+                    totalDaily += dailyEnergy;
+                    totalMonthly += monthlyEnergy;
+
+                    row.innerHTML = `
+                        <td>${appliance.id}</td>
+                        <td>${this.escapeHtml(appliance.name)}</td>
+                        <td>${appliance.power_watt}W</td>
+                        <td>${appliance.hours_per_day}h</td>
+                        <td><span class="energy-badge">${dailyEnergy.toFixed(2)} kWh</span></td>
+                        <td><span class="energy-badge">${monthlyEnergy.toFixed(2)} kWh</span></td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="appliancesManager.deleteAppliance(${appliance.id})">
+                                Delete
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // Update totals
+                document.getElementById('totalDaily').textContent = totalDaily.toFixed(2) + ' kWh';
+                document.getElementById('totalMonthly').textContent = totalMonthly.toFixed(2) + ' kWh';
+            }
+
+            async addAppliance() {
+                const formData = {
+                    name: document.getElementById('applianceName').value,
+                    power_watt: parseInt(document.getElementById('appliancePower').value),
+                    hours_per_day: parseFloat(document.getElementById('applianceHours').value)
+                };
+
+                try {
+                    const response = await fetch(`${this.apiBase}/appliances`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.id) {
+                        document.getElementById('addApplianceForm').reset();
+                        this.loadAppliances();
+                        this.showAlert('Appliance added successfully!', 'success');
+                    } else {
+                        this.showAlert('Error adding appliance', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error adding appliance:', error);
+                    this.showAlert('Error adding appliance', 'danger');
+                }
+            }
+
+            async deleteAppliance(applianceId) {
+                if (!confirm('Are you sure you want to delete this appliance?')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${this.apiBase}/appliances/${applianceId}`, {
+                        method: 'DELETE'
+                    });
+
+                    const result = await response.json();
+
+                    if (result.message) {
+                        this.loadAppliances();
+                        this.showAlert('Appliance deleted successfully!', 'success');
+                    } else {
+                        this.showAlert('Error deleting appliance', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error deleting appliance:', error);
+                    this.showAlert('Error deleting appliance', 'danger');
+                }
+            }
+
+            showAlert(message, type) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show mt-3`;
+                alertDiv.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.card'));
+                
+                setTimeout(() => {
+                    if (alertDiv.parentElement) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+            }
+
+            escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+        }
+
+        const appliancesManager = new AppliancesManager();
+    </script>
+</body>
+</html>
