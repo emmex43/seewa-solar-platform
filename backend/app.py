@@ -8,12 +8,13 @@ import math
 from datetime import datetime
 import os
 
-app = Flask(__name__, static_folder="../frontend/static", template_folder="../frontend/templates")
+app = Flask(__name__, static_folder="../frontend/static",
+            template_folder="../frontend/templates")
 CORS(app)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///seewa.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SECRET_KEY"] = "your-secret-key-here-change-in-production"
+app.config["SECRET_KEY"] = "2025etgdhdhhjjdjjsakoyddhhrttsgg"
 
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -21,6 +22,8 @@ login_manager.init_app(app)
 login_manager.login_view = 'login_page'
 
 # User Model
+
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -36,6 +39,8 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 # Project Model
+
+
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     project_name = db.Column(db.String(100))
@@ -59,12 +64,15 @@ class Project(db.Model):
         }
 
 # Appliance Model
+
+
 class Appliance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     power_watt = db.Column(db.Integer, nullable=False)
     hours_per_day = db.Column(db.Float, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Allow null for existing data
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'user.id'), nullable=True)  # Allow null for existing data
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
@@ -79,6 +87,8 @@ class Appliance(db.Model):
         }
 
 # Analytics Model
+
+
 class Analytics(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     event_type = db.Column(db.String(50), nullable=False)
@@ -86,9 +96,11 @@ class Analytics(db.Model):
     data = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
 
 # Nigeria Solar Data - Fallback when NASA API is unavailable
 NIGERIA_SOLAR_DATA = {
@@ -102,9 +114,13 @@ NIGERIA_SOLAR_DATA = {
     'maiduguri': {'lat': 11.8333, 'lng': 13.1500, 'irradiance': 5.6}
 }
 
-# Nigeria-specific data
-NIGERIA_ELECTRICITY_COST = 0.15
-NIGERIA_EMISSION_FACTOR = 0.61
+# Enhanced Nigeria-specific data
+NIGERIA_ELECTRICITY_COST = 0.15      # USD/kWh (average)
+NIGERIA_ELECTRICITY_COST_NAIRA = 225  # ₦/kWh (approx 1500 ₦/$)
+NIGERIA_EMISSION_FACTOR = 0.61       # kg CO2/kWh (Nigeria grid)
+# kWh/year (more accurate Nigerian average)
+AVERAGE_HOME_CONSUMPTION = 2400
+
 
 class SolarEstimator:
     @staticmethod
@@ -114,7 +130,7 @@ class SolarEstimator:
         nasa_data = SolarEstimator._try_nasa_api(lat, lon)
         if nasa_data is not None:
             return nasa_data
-        
+
         # Fallback to cached Nigerian data
         return SolarEstimator._get_cached_nigerian_irradiance(lat, lon)
 
@@ -128,26 +144,27 @@ class SolarEstimator:
                 'longitude': lon,
                 'latitude': lat,
                 'start': '2020',
-                'end': '2021',
+                'end': '2025',
                 'format': 'JSON'
             }
-            
+
             response = requests.get(
-                "https://power.larc.nasa.gov/api/system/application/run.json", 
-                params=params, 
+                "https://power.larc.nasa.gov/api/system/application/run.json",
+                params=params,
                 timeout=5  # Shorter timeout
             )
-            
+
             if response.status_code == 200:
                 data = response.json()
                 irradiance_data = data['properties']['parameter']['ALLSKY_SFC_SW_DWN']
                 values = [v for v in irradiance_data.values() if v is not None]
-                
+
                 if values:
                     irradiance = sum(values) / len(values)
-                    print(f"✅ NASA API Success: {irradiance} kWh/m²/day for ({lat}, {lon})")
+                    print(
+                        f"✅ NASA API Success: {irradiance} kWh/m²/day for ({lat}, {lon})")
                     return irradiance
-            
+
         except requests.exceptions.Timeout:
             print("⚠️ NASA API timeout - using cached data")
         except requests.exceptions.ConnectionError:
@@ -156,7 +173,7 @@ class SolarEstimator:
             print(f"⚠️ NASA API error: {e} - using cached data")
         except Exception as e:
             print(f"⚠️ NASA API parsing error: {e} - using cached data")
-        
+
         return None
 
     @staticmethod
@@ -165,18 +182,20 @@ class SolarEstimator:
         # Find the closest Nigerian city
         closest_city = None
         min_distance = float('inf')
-        
+
         for city_name, city_data in NIGERIA_SOLAR_DATA.items():
-            distance = math.sqrt((lat - city_data['lat'])**2 + (lon - city_data['lng'])**2)
+            distance = math.sqrt(
+                (lat - city_data['lat'])**2 + (lon - city_data['lng'])**2)
             if distance < min_distance:
                 min_distance = distance
                 closest_city = city_name
-        
+
         if closest_city:
             irradiance = NIGERIA_SOLAR_DATA[closest_city]['irradiance']
-            print(f"📍 Using cached data for {closest_city.title()}: {irradiance} kWh/m²/day")
+            print(
+                f"📍 Using cached data for {closest_city.title()}: {irradiance} kWh/m²/day")
             return irradiance
-        
+
         # Default fallback - Nigeria average
         print("📍 Using Nigeria average: 5.0 kWh/m²/day")
         return 5.0
@@ -184,8 +203,16 @@ class SolarEstimator:
     @staticmethod
     def calculate_solar_potential(irradiance, area, efficiency=0.18):
         """Calculate solar energy potential for Nigerian conditions"""
-        system_performance = 0.75  # Lower performance factor for Nigerian dust conditions
-        daily_energy = irradiance * area * efficiency * system_performance
+        # More realistic performance factors
+        system_performance = 0.78  # Slightly improved - modern systems handle dust better
+        temperature_loss = 0.95    # 5% loss due to high temperatures
+        wiring_loss = 0.98         # 2% wiring losses
+        inverter_efficiency = 0.96  # 4% inverter loss
+
+        total_system_loss = system_performance * \
+            temperature_loss * wiring_loss * inverter_efficiency
+
+        daily_energy = irradiance * area * efficiency * total_system_loss
         annual_energy = daily_energy * 365
         return annual_energy
 
@@ -193,17 +220,24 @@ class SolarEstimator:
     def calculate_nigerian_benefits(energy_kwh):
         """Calculate benefits specific to Nigeria"""
         carbon_offset_tons = (energy_kwh * NIGERIA_EMISSION_FACTOR) / 1000
-        annual_savings = energy_kwh * NIGERIA_ELECTRICITY_COST
-        equivalent_homes = energy_kwh / 4380  # Average Nigerian home consumption
-        
+        annual_savings_usd = energy_kwh * NIGERIA_ELECTRICITY_COST
+        annual_savings_naira = energy_kwh * NIGERIA_ELECTRICITY_COST_NAIRA
+        equivalent_homes = energy_kwh / AVERAGE_HOME_CONSUMPTION
+
+        # More accurate tree calculation
+        # Average tree absorbs 21.77 kg CO2 per year = 0.02177 tons
+        equivalent_trees = carbon_offset_tons / 0.02177
         return {
             'carbon_offset_tons': carbon_offset_tons,
-            'annual_savings_usd': annual_savings,
+            'annual_savings_usd': annual_savings_usd,
+            'annual_savings_naira': annual_savings_naira,
             'equivalent_homes': equivalent_homes,
-            'equivalent_trees': carbon_offset_tons * 2.5  # Trees needed to offset
+            'equivalent_trees': equivalent_trees
         }
-                 
+
+
 solar_estimator = SolarEstimator()
+
 
 def log_analytics(event_type, user_id=None, data=None):
     analytics = Analytics(
@@ -215,21 +249,24 @@ def log_analytics(event_type, user_id=None, data=None):
     db.session.commit()
 
 # Authentication Routes
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login_page():
     if request.method == "POST":
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
-        
+
         if user and user.check_password(password):
             login_user(user)
             log_analytics('user_login', user.id)
             return redirect(url_for('home'))
         else:
             flash('Invalid username or password')
-    
+
     return render_template("login.html")
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register_page():
@@ -237,7 +274,7 @@ def register_page():
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
-        
+
         if User.query.filter_by(username=username).first():
             flash('Username already exists')
         elif User.query.filter_by(email=email).first():
@@ -247,12 +284,13 @@ def register_page():
             user.set_password(password)
             db.session.add(user)
             db.session.commit()
-            
+
             login_user(user)
             log_analytics('user_registration', user.id)
             return redirect(url_for('home'))
-    
+
     return render_template("register.html")
+
 
 @app.route("/logout")
 @login_required
@@ -262,23 +300,29 @@ def logout():
     return redirect(url_for('home'))
 
 # Basic Routes
+
+
 @app.route("/")
 def home():
     return render_template("index.html")
+
 
 @app.route("/projects")
 @login_required
 def projects_page():
     return render_template("projects.html")
 
+
 @app.route("/calculator")
 def calculator_page():
     return render_template("calculator.html")
+
 
 @app.route("/appliances")
 @login_required
 def appliances_page():
     return render_template("appliances.html")
+
 
 @app.route("/analytics")
 @login_required
@@ -286,11 +330,14 @@ def analytics_page():
     return render_template("analytics.html")
 
 # PROJECTS API ENDPOINTS
+
+
 @app.route("/api/projects", methods=["GET"])
 @login_required
 def get_projects():
     projects = Project.query.filter_by(user_id=current_user.id).all()
     return jsonify([p.to_dict() for p in projects])
+
 
 @app.route("/api/projects", methods=["POST"])
 @login_required
@@ -300,26 +347,32 @@ def add_project():
     new_project.user_id = current_user.id
     db.session.add(new_project)
     db.session.commit()
-    
-    log_analytics('project_created', current_user.id, f"Project: {data.get('project_name')}")
+
+    log_analytics('project_created', current_user.id,
+                  f"Project: {data.get('project_name')}")
     return jsonify(new_project.to_dict())
+
 
 @app.route("/api/projects/<int:id>", methods=["DELETE"])
 @login_required
 def delete_project(id):
-    project = Project.query.filter_by(id=id, user_id=current_user.id).first_or_404()
+    project = Project.query.filter_by(
+        id=id, user_id=current_user.id).first_or_404()
     db.session.delete(project)
     db.session.commit()
-    
+
     log_analytics('project_deleted', current_user.id, f"Project ID: {id}")
     return jsonify({"message": "Project deleted"})
 
 # APPLIANCES API ENDPOINTS
+
+
 @app.route("/api/appliances", methods=["GET"])
 @login_required
 def get_appliances():
     appliances = Appliance.query.filter_by(user_id=current_user.id).all()
     return jsonify([a.to_dict() for a in appliances])
+
 
 @app.route("/api/appliances", methods=["POST"])
 @login_required
@@ -329,21 +382,26 @@ def add_appliance():
     new_appliance.user_id = current_user.id
     db.session.add(new_appliance)
     db.session.commit()
-    
-    log_analytics('appliance_added', current_user.id, f"Appliance: {data.get('name')}")
+
+    log_analytics('appliance_added', current_user.id,
+                  f"Appliance: {data.get('name')}")
     return jsonify(new_appliance.to_dict())
+
 
 @app.route("/api/appliances/<int:id>", methods=["DELETE"])
 @login_required
 def delete_appliance(id):
-    appliance = Appliance.query.filter_by(id=id, user_id=current_user.id).first_or_404()
+    appliance = Appliance.query.filter_by(
+        id=id, user_id=current_user.id).first_or_404()
     db.session.delete(appliance)
     db.session.commit()
-    
+
     log_analytics('appliance_deleted', current_user.id, f"Appliance ID: {id}")
     return jsonify({"message": "Appliance deleted"})
 
 # SOLAR ESTIMATION API ENDPOINTS
+
+
 @app.route("/api/solar-estimate", methods=["POST"])
 def solar_estimate():
     """Solar estimation endpoint for Nigerian locations"""
@@ -353,15 +411,17 @@ def solar_estimate():
         lng = float(data['longitude'])
         area = float(data.get('area', 20))
         efficiency = float(data.get('efficiency', 0.18))
-        
+
         # Get solar data (with fallback)
         irradiance = solar_estimator.get_nigerian_solar_irradiance(lat, lng)
-        annual_energy = solar_estimator.calculate_solar_potential(irradiance, area, efficiency)
+        annual_energy = solar_estimator.calculate_solar_potential(
+            irradiance, area, efficiency)
         benefits = solar_estimator.calculate_nigerian_benefits(annual_energy)
-        
+
         # Determine data source for the response
-        data_source = "nasa_api" if SolarEstimator._try_nasa_api(lat, lng) is not None else "cached_data"
-        
+        data_source = "nasa_api" if SolarEstimator._try_nasa_api(
+            lat, lng) is not None else "cached_data"
+
         response = {
             'success': True,
             'data_source': data_source,
@@ -382,32 +442,36 @@ def solar_estimate():
                 'estimated_panels': math.ceil(area / 1.6)
             }
         }
-        
+
         if current_user.is_authenticated:
-            log_analytics('solar_calculation', current_user.id, f"Location: {lat},{lng}, Area: {area}m²")
-        
+            log_analytics('solar_calculation', current_user.id,
+                          f"Location: {lat},{lng}, Area: {area}m²")
+
         return jsonify(response)
-        
+
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 400
 
 # ANALYTICS API ENDPOINTS
+
+
 @app.route("/api/analytics/dashboard")
 @login_required
 def get_analytics_dashboard():
     user_calculations = Analytics.query.filter_by(
-        user_id=current_user.id, 
+        user_id=current_user.id,
         event_type='solar_calculation'
     ).count()
-    
+
     user_projects = Project.query.filter_by(user_id=current_user.id).count()
-    user_appliances = Appliance.query.filter_by(user_id=current_user.id).count()
-    
+    user_appliances = Appliance.query.filter_by(
+        user_id=current_user.id).count()
+
     recent_activity = Analytics.query.filter_by(user_id=current_user.id)\
         .order_by(Analytics.created_at.desc())\
         .limit(10)\
         .all()
-    
+
     activity_data = []
     for activity in recent_activity:
         activity_data.append({
@@ -415,7 +479,7 @@ def get_analytics_dashboard():
             'created_at': activity.created_at.isoformat(),
             'data': activity.data
         })
-    
+
     return jsonify({
         'user_stats': {
             'solar_calculations': user_calculations,
@@ -424,6 +488,7 @@ def get_analytics_dashboard():
         },
         'recent_activity': activity_data
     })
+
 
 @app.route("/api/nigerian-cities")
 def nigerian_cities():
@@ -439,6 +504,7 @@ def nigerian_cities():
     ]
     return jsonify(cities)
 
+
 def init_db():
     """Initialize database with required data"""
     # Create admin user if not exists
@@ -447,19 +513,25 @@ def init_db():
         admin.set_password('admin123')
         db.session.add(admin)
         print("Admin user created: admin / admin123")
-    
+
     # Add sample appliances for admin user
     admin_user = User.query.filter_by(username='admin').first()
     if admin_user and Appliance.query.filter_by(user_id=admin_user.id).count() == 0:
         sample_appliances = [
-            Appliance(name="LED Bulb", power_watt=10, hours_per_day=6, user_id=admin_user.id),
-            Appliance(name="Fan", power_watt=50, hours_per_day=8, user_id=admin_user.id),
-            Appliance(name="TV", power_watt=100, hours_per_day=5, user_id=admin_user.id),
-            Appliance(name="Refrigerator", power_watt=150, hours_per_day=24, user_id=admin_user.id),
-            Appliance(name="Laptop", power_watt=60, hours_per_day=4, user_id=admin_user.id)
+            Appliance(name="LED Bulb", power_watt=10,
+                      hours_per_day=6, user_id=admin_user.id),
+            Appliance(name="Fan", power_watt=50,
+                      hours_per_day=8, user_id=admin_user.id),
+            Appliance(name="TV", power_watt=100,
+                      hours_per_day=5, user_id=admin_user.id),
+            Appliance(name="Refrigerator", power_watt=150,
+                      hours_per_day=24, user_id=admin_user.id),
+            Appliance(name="Laptop", power_watt=60,
+                      hours_per_day=4, user_id=admin_user.id)
         ]
         db.session.add_all(sample_appliances)
         print("Sample appliances added to database")
+
 
 if __name__ == "__main__":
     with app.app_context():
@@ -468,10 +540,10 @@ if __name__ == "__main__":
         db.create_all()
         init_db()
         db.session.commit()
-    
+
     # Get port from environment variable or default to 5000 for local development
     port = int(os.environ.get("PORT", 5000))
-    
+
     # Run the app - use 0.0.0.0 for Render, 127.0.0.1 for local
     if os.environ.get("RENDER"):
         # Production on Render
