@@ -7,9 +7,18 @@ import requests
 import math
 from datetime import datetime
 import os
-import numpy as np
 import logging
 from typing import Dict, List, Optional
+
+# Manual product calculation to replace numpy
+
+
+def calculate_product(values):
+    result = 1.0
+    for value in values:
+        result *= value
+    return result
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -240,8 +249,8 @@ class SolarEstimator:
 
     def calculate_total_losses(self, region='middle_belt', panel_tilt=15, has_battery=False):
         """Calculate comprehensive system losses"""
-        # Start with base losses
-        total_loss = np.prod(list(self.loss_factors.values()))
+        # Start with base losses - FIXED: use calculate_product instead of np.prod
+        total_loss = calculate_product(list(self.loss_factors.values()))
 
         # Apply regional adjustments
         region_data = self.regional_adjustments.get(region, {})
@@ -257,6 +266,8 @@ class SolarEstimator:
             total_loss *= 0.92  # Battery round-trip efficiency
 
         return total_loss
+
+    # ... rest of your SolarEstimator methods remain the same ...
 
     def calculate_tilt_factor(self, tilt_angle, optimal_tilt=15):
         """Calculate performance factor based on tilt angle"""
