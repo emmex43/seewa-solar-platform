@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,51 +11,56 @@
             font-weight: bold;
             color: #2E8B57 !important;
         }
+
         .card {
             border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
+
         .btn-primary {
             background-color: #2E8B57;
             border-color: #2E8B57;
         }
+
         .result-card {
             background: linear-gradient(135deg, #2E8B57, #3CB371);
             color: white;
         }
+
         .benefit-item {
             padding: 15px;
             border-radius: 8px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             margin-bottom: 10px;
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container">
-        <a class="navbar-brand" href="/">🌞 SEEWA</a>
-        <div class="navbar-nav">
-            <a class="nav-link" href="/">Home</a>
-            <a class="nav-link" href="/calculator">Solar Calculator</a>
-            {% if current_user.is_authenticated %}
+        <div class="container">
+            <a class="navbar-brand" href="/">🌞 SEEWA</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="/calculator">Solar Calculator</a>
+                {% if current_user.is_authenticated %}
                 <a class="nav-link" href="/projects">Projects</a>
                 <a class="nav-link" href="/appliances">Appliances</a>
                 <a class="nav-link" href="/analytics">Analytics</a>
                 <a class="nav-link" href="/logout">Logout ({{ current_user.username }})</a>
-            {% else %}
+                {% else %}
                 <a class="nav-link" href="/login">Login</a>
                 <a class="nav-link" href="/register">Register</a>
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
     <div class="container mt-4">
         <h1 class="mb-4">Solar Energy Calculator - Nigeria</h1>
         <p class="lead">Calculate the solar potential and benefits for any location in Nigeria</p>
-        
+
         <div class="row">
             <!-- Calculator Form -->
             <div class="col-md-6">
@@ -68,25 +74,30 @@
                                 <label class="form-label">Select Nigerian City</label>
                                 <select class="form-select" id="citySelect" required>
                                     <option value="">Choose a city...</option>
-                                    <option value="6.5244,3.3792">Lagos</option>
-                                    <option value="9.0579,7.4951">Abuja</option>
-                                    <option value="12.0022,8.5920">Kano</option>
-                                    <option value="7.3776,3.9470">Ibadan</option>
-                                    <option value="4.8156,7.0498">Port Harcourt</option>
-                                    <option value="6.3350,5.6037">Benin City</option>
-                                    <option value="10.5105,7.4165">Kaduna</option>
-                                    <option value="11.8333,13.1500">Maiduguri</option>
+                                    <option value="6.5244,3.3792,south">Lagos</option>
+                                    <option value="9.0579,7.4951,middle_belt">Abuja</option>
+                                    <option value="12.0022,8.5920,north">Kano</option>
+                                    <option value="7.3776,3.9470,south">Ibadan</option>
+                                    <option value="4.8156,7.0498,south">Port Harcourt</option>
+                                    <option value="6.3350,5.6037,south">Benin City</option>
+                                    <option value="10.5105,7.4165,north">Kaduna</option>
+                                    <option value="11.8333,13.1500,north">Maiduguri</option>
+                                    <option value="8.5000,4.5500,middle_belt">Ilorin</option>
+                                    <option value="6.4500,7.5000,south">Enugu</option>
+                                    <option value="13.0667,5.2333,north">Sokoto</option>
                                 </select>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label class="form-label">Or Enter Custom Coordinates</label>
                                 <div class="row">
                                     <div class="col">
-                                        <input type="number" class="form-control" id="latitude" placeholder="Latitude" step="any">
+                                        <input type="number" class="form-control" id="latitude" placeholder="Latitude"
+                                            step="any">
                                     </div>
                                     <div class="col">
-                                        <input type="number" class="form-control" id="longitude" placeholder="Longitude" step="any">
+                                        <input type="number" class="form-control" id="longitude" placeholder="Longitude"
+                                            step="any">
                                     </div>
                                 </div>
                                 <small class="text-muted">Example for Lagos: 6.5244, 3.3792</small>
@@ -94,7 +105,8 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Available Roof Area (square meters)</label>
-                                <input type="number" class="form-control" id="roofArea" value="20" min="1" step="0.1" required>
+                                <input type="number" class="form-control" id="roofArea" value="20" min="1" step="0.1"
+                                    required>
                                 <small class="text-muted">Typical Nigerian home: 20-50 m²</small>
                             </div>
 
@@ -106,6 +118,28 @@
                                     <option value="0.20">Premium Panels (20%)</option>
                                     <option value="0.22">High Efficiency (22%)</option>
                                 </select>
+                            </div>
+                            <!-- Add this after the Panel Efficiency section -->
+                            <div class="mb-3">
+                                <label class="form-label">Panel Tilt Angle (degrees)</label>
+                                <input type="number" class="form-control" id="panelTilt" value="15" min="0" max="90"
+                                    step="1">
+                                <small class="text-muted">Optimal for Nigeria: 10-20°</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Include Battery Storage?</label>
+                                <select class="form-select" id="hasBattery">
+                                    <option value="false">No Battery</option>
+                                    <option value="true">With Battery Backup</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">System Cost (USD - Optional)</label>
+                                <input type="number" class="form-control" id="systemCost"
+                                    placeholder="Enter system cost for ROI analysis">
+                                <small class="text-muted">Leave empty for energy-only calculation</small>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100" id="calculateBtn">
@@ -132,7 +166,8 @@
                 <div class="card" id="placeholderCard">
                     <div class="card-body text-center">
                         <h5>Ready to Calculate</h5>
-                        <p class="text-muted">Enter your location details to see the solar potential and benefits for your area in Nigeria.</p>
+                        <p class="text-muted">Enter your location details to see the solar potential and benefits for
+                            your area in Nigeria.</p>
                     </div>
                 </div>
             </div>
@@ -156,149 +191,197 @@
     </div>
 
     <!-- Bootstrap & JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        class SolarCalculator {
-            constructor() {
-                this.apiBase = '/api';
-                this.init();
-            }
-
-            init() {
-                this.setupEventListeners();
-            }
-
-            setupEventListeners() {
-                document.getElementById('solarCalculatorForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.calculateSolarPotential();
-                });
-
-                document.getElementById('citySelect').addEventListener('change', (e) => {
-                    if (e.target.value) {
-                        const [lat, lng] = e.target.value.split(',');
-                        document.getElementById('latitude').value = lat;
-                        document.getElementById('longitude').value = lng;
-                    }
-                });
-            }
-
-            async calculateSolarPotential() {
-                const calculateBtn = document.getElementById('calculateBtn');
-                const originalText = calculateBtn.innerHTML;
-                
-                try {
-                    calculateBtn.innerHTML = 'Calculating...';
-                    calculateBtn.disabled = true;
-
-                    const latitude = parseFloat(document.getElementById('latitude').value);
-                    const longitude = parseFloat(document.getElementById('longitude').value);
-                    const area = parseFloat(document.getElementById('roofArea').value);
-                    const efficiency = parseFloat(document.getElementById('panelEfficiency').value);
-
-                    if (!latitude || !longitude) {
-                        throw new Error('Please select a city or enter coordinates');
-                    }
-
-                    const response = await fetch(`${this.apiBase}/solar-estimate`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            latitude: latitude,
-                            longitude: longitude,
-                            area: area,
-                            efficiency: efficiency
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        this.displayResults(result);
-                    } else {
-                        throw new Error(result.error);
-                    }
-
-                } catch (error) {
-                    console.error('Calculation error:', error);
-                    alert('Error: ' + error.message);
-                } finally {
-                    calculateBtn.innerHTML = originalText;
-                    calculateBtn.disabled = false;
+    <sript src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js">
+        </script>
+        <script>
+            class SolarCalculator {
+                constructor() {
+                    this.apiBase = '/api';
+                    this.init();
                 }
-            }
 
-            displayResults(data) {
-                // Show results card and hide placeholder
-                document.getElementById('resultsCard').style.display = 'block';
-                document.getElementById('placeholderCard').style.display = 'none';
-                document.getElementById('benefitsSection').style.display = 'block';
+                init() {
+                    this.setupEventListeners();
+                }
 
-                // Display main results
-                document.getElementById('resultsContent').innerHTML = `
+                setupEventListeners() {
+                    const form = document.getElementById('solarCalculatorForm');
+                    const citySelect = document.getElementById('citySelect');
+                    const advancedToggle = document.getElementById('advancedToggle');
+
+                    if (form) {
+                        form.addEventListener('submit', (e) => {
+                            e.preventDefault();
+                            this.calculateSolarPotential();
+                        });
+                    }
+
+                    if (citySelect) {
+                        citySelect.addEventListener('change', (e) => {
+                            if (e.target.value) {
+                                const [lat, lng, region] = e.target.value.split(',');
+                                document.getElementById('latitude').value = lat || '';
+                                document.getElementById('longitude').value = lng || '';
+                            }
+                        });
+                    }
+
+                    if (advancedToggle) {
+                        advancedToggle.addEventListener('click', () => {
+                            const advancedOptions = document.getElementById('advancedOptions');
+                            if (advancedOptions) {
+                                const isVisible = advancedOptions.style.display === 'block';
+                                advancedOptions.style.display = isVisible ? 'none' : 'block';
+                                advancedToggle.textContent = isVisible ? 'Show Advanced Options' : 'Hide Advanced Options';
+                            }
+                        });
+                    }
+                }
+
+                async calculateSolarPotential() {
+                    const calculateBtn = document.getElementById('calculateBtn');
+                    if (!calculateBtn) return;
+
+                    const originalText = calculateBtn.innerHTML;
+
+                    try {
+                        calculateBtn.innerHTML = 'Calculating...';
+                        calculateBtn.disabled = true;
+
+                        const latitude = parseFloat(document.getElementById('latitude').value);
+                        const longitude = parseFloat(document.getElementById('longitude').value);
+                        const area = parseFloat(document.getElementById('roofArea').value);
+                        const efficiency = parseFloat(document.getElementById('panelEfficiency').value);
+
+                        if (!latitude || !longitude) {
+                            throw new Error('Please select a city or enter coordinates');
+                        }
+
+                        const response = await fetch(`${this.apiBase}/solar-estimate`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                latitude: latitude,
+                                longitude: longitude,
+                                area: area,
+                                efficiency: efficiency
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            this.displayResults(result);
+                        } else {
+                            throw new Error(result.error || 'Calculation failed');
+                        }
+
+                    } catch (error) {
+                        console.error('Calculation error:', error);
+                        alert('Error: ' + error.message);
+                    } finally {
+                        calculateBtn.innerHTML = originalText;
+                        calculateBtn.disabled = false;
+                    }
+                }
+
+                displayResults(data) {
+                    const resultsCard = document.getElementById('resultsCard');
+                    const placeholderCard = document.getElementById('placeholderCard');
+                    const benefitsSection = document.getElementById('benefitsSection');
+
+                    if (!resultsCard || !placeholderCard || !benefitsSection) return;
+
+                    // Show results card and hide placeholder
+                    resultsCard.style.display = 'block';
+                    placeholderCard.style.display = 'none';
+                    benefitsSection.style.display = 'block';
+
+                    // Fix for kW system - handle both old and new field names
+                    const systemSizeData = data.system_size || {};
+                    const systemSizeKW = systemSizeData.system_size_kw || systemSizeData.recommended_capacity_kw || 'N/A';
+                    const panelWatts = systemSizeData.panel_watts || 450;
+
+                    // Safely access data with fallbacks
+                    const solarData = data.solar_data || {};
+                    const benefits = data.benefits || {};
+                    const location = data.location || {};
+
+                    // Display main results
+                    const resultsContent = document.getElementById('resultsContent');
+                    if (resultsContent) {
+                        resultsContent.innerHTML = `
                     <div class="row text-center">
                         <div class="col-md-4 mb-3">
                             <div class="benefit-item">
-                                <h4>${data.solar_data.annual_energy_kwh.toLocaleString()}</h4>
+                                <h4>${(solarData.annual_energy_kwh || 0).toLocaleString()}</h4>
                                 <small>kWh/Year</small>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="benefit-item">
-                                <h4>${data.solar_data.monthly_energy_kwh.toLocaleString()}</h4>
+                                <h4>${(solarData.monthly_energy_kwh || 0).toLocaleString()}</h4>
                                 <small>kWh/Month</small>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="benefit-item">
-                                <h4>${data.system_size.recommended_capacity_kw}</h4>
+                                <h4>${systemSizeKW}</h4>
                                 <small>kW System</small>
                             </div>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <p><strong>Location:</strong> ${data.location.lat.toFixed(4)}, ${data.location.lng.toFixed(4)}</p>
-                        <p><strong>Daily Solar Irradiance:</strong> ${data.solar_data.daily_irradiance} kWh/m²/day</p>
-                        <p><strong>Estimated Panels Needed:</strong> ${data.system_size.estimated_panels}</p>
+                        <p><strong>Location:</strong> ${location.lat ? location.lat.toFixed(4) : 'N/A'}, ${location.lng ? location.lng.toFixed(4) : 'N/A'}</p>
+                        <p><strong>Daily Solar Irradiance:</strong> ${solarData.daily_irradiance || 'N/A'} kWh/m²/day</p>
+                        <p><strong>Estimated Panels:</strong> ${systemSizeData.estimated_panels || 'N/A'} (${panelWatts}W each)</p>
                     </div>
                 `;
+                    }
 
-                // Display benefits
-                document.getElementById('benefitsContent').innerHTML = `
+                    // Display benefits
+                    const benefitsContent = document.getElementById('benefitsContent');
+                    if (benefitsContent) {
+                        // Calculate Naira savings (using existing conversion or new field)
+                        const nairaSavings = benefits.annual_savings_naira || (benefits.annual_savings_usd ? benefits.annual_savings_usd * 1500 : 0);
+
+                        benefitsContent.innerHTML = `
                     <div class="col-md-3">
                         <div class="text-center p-3 border rounded">
-                            <h4 class="text-success">₦${Math.round(data.benefits.annual_savings_usd * 1500).toLocaleString()}</h4>
+                            <h4 class="text-success">₦${Math.round(nairaSavings).toLocaleString()}</h4>
                             <small>Annual Savings (Naira)</small>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="text-center p-3 border rounded">
-                            <h4 class="text-success">${data.benefits.carbon_offset_tons}</h4>
+                            <h4 class="text-success">${benefits.carbon_offset_tons || 0}</h4>
                             <small>Tons CO₂ Offset/Year</small>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="text-center p-3 border rounded">
-                            <h4 class="text-success">${data.benefits.equivalent_homes}</h4>
+                            <h4 class="text-success">${benefits.equivalent_homes || 0}</h4>
                             <small>Homes Powered</small>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="text-center p-3 border rounded">
-                            <h4 class="text-success">${data.benefits.equivalent_trees}</h4>
+                            <h4 class="text-success">${benefits.equivalent_trees || 0}</h4>
                             <small>Equivalent Trees</small>
                         </div>
                     </div>
                 `;
+                    }
+                }
             }
-        }
 
-        // Initialize the calculator when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            new SolarCalculator();
-        });
-    </script>
+            // Initialize the calculator when page loads
+            document.addEventListener('DOMContentLoaded', function () {
+                new SolarCalculator();
+            });
+        </script>
 </body>
+
 </html>

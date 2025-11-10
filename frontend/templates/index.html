@@ -1,131 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEEWA - Solar Energy for Nigeria</title>
+    <meta name="description" content="SEEWA - Solar Energy Calculator for Nigerian Campuses and Communities">
+    <meta name="keywords" content="solar energy, nigeria, campus, renewable energy, calculator">
+    <title>SEEWA - Solar Energy for Nigerian Campuses</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌞</text></svg>">
     <style>
         .navbar-brand {
             font-weight: bold;
             color: #2E8B57 !important;
         }
+
         .hero-section {
             background: linear-gradient(135deg, #2E8B57, #3CB371);
             color: white;
             padding: 80px 0;
             text-align: center;
         }
+
         .feature-card {
             border: none;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             transition: transform 0.3s;
+            height: 100%;
         }
+
         .feature-card:hover {
             transform: translateY(-5px);
         }
+
         .btn-primary {
             background-color: #2E8B57;
             border-color: #2E8B57;
         }
+
         .btn-outline-primary {
             color: #2E8B57;
             border-color: #2E8B57;
         }
+
         .btn-outline-primary:hover {
             background-color: #2E8B57;
             color: white;
         }
+
+        .campus-impact {
+            background-color: #f8f9fa;
+            border-left: 4px solid #2E8B57;
+        }
     </style>
 </head>
+
 <body>
+    <!-- Fixed Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container">
-        <a class="navbar-brand" href="/">🌞 SEEWA</a>
-        <div class="navbar-nav">
-            <a class="nav-link" href="/">Home</a>
-            <a class="nav-link" href="/calculator">Solar Calculator</a>
-            {% if current_user.is_authenticated %}
-                <a class="nav-link" href="/projects">Projects</a>
-                <a class="nav-link" href="/appliances">Appliances</a>
-                <a class="nav-link" href="/analytics">Analytics</a>
-                <a class="nav-link" href="/logout">Logout ({{ current_user.username }})</a>
-            {% else %}
-                <a class="nav-link" href="/login">Login</a>
-                <a class="nav-link" href="/register">Register</a>
-            {% endif %}
+        <div class="container">
+            <a class="navbar-brand" href="/">🌞 SEEWA</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link active" href="/">Home</a>
+                    <a class="nav-link" href="/calculator">Solar Calculator</a>
+                    {% if current_user.is_authenticated %}
+                    <a class="nav-link" href="/projects">Projects</a>
+                    <a class="nav-link" href="/appliances">Appliances</a>
+                    <a class="nav-link" href="/analytics">Analytics</a>
+                    <a class="nav-link" href="/logout">Logout ({{ current_user.username }})</a>
+                    {% else %}
+                    <a class="nav-link" href="/login">Login</a>
+                    <a class="nav-link" href="/register">Register</a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
-            <h1 class="display-4 mb-4">SEEWA - Solar Energy Estimation & Awareness</h1>
-            <p class="lead mb-4">Empowering Nigeria with Clean, Affordable Solar Energy Solutions</p>
+            <h1 class="display-4 mb-4">SEEWA - Solar Energy for Campus & Community</h1>
+            <p class="lead mb-4">Empowering Nigerian Campuses with Data-Driven Solar Energy Solutions</p>
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <div class="text-center">
-                                <h3>🌞</h3>
-                                <h5>5+ Hours</h5>
-                                <small>Daily Sunlight in Nigeria</small>
+                                <h3>🎓</h3>
+                                <h5>Campus Focused</h5>
+                                <small>Designed for Educational Institutions</small>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="text-center">
                                 <h3>💰</h3>
-                                <h5>60% Savings</h5>
-                                <small>On Electricity Costs</small>
+                                <h5>Up to ₦2.7M Savings</h5>
+                                <small>Per 50m² Rooftop</small>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="text-center">
                                 <h3>🌍</h3>
-                                <h5>Clean Energy</h5>
-                                <small>Zero Carbon Emissions</small>
+                                <h5>Sustainable Campus</h5>
+                                <small>Reduce Carbon Footprint</small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <a href="/calculator" class="btn btn-light btn-lg mt-3">Calculate Your Solar Potential</a>
+            <a href="/calculator" class="btn btn-light btn-lg mt-3">Calculate Campus Solar Potential</a>
+        </div>
+    </section>
+
+    <!-- Campus Impact Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Transform Your Campus with Solar Energy</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="p-4 campus-impact">
+                        <h4>🏫 For University Administration</h4>
+                        <ul>
+                            <li>Reduce campus electricity costs by 60-80%</li>
+                            <li>Meet sustainability and carbon reduction goals</li>
+                            <li>Create practical learning laboratories</li>
+                            <li>Generate long-term financial savings</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-4 campus-impact">
+                        <h4>🎓 For Students & Researchers</h4>
+                        <ul>
+                            <li>Hands-on renewable energy projects</li>
+                            <li>Real data for engineering and science courses</li>
+                            <li>Campus sustainability initiatives</li>
+                            <li>Entrepreneurship opportunities</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="py-5">
+    <section class="py-5 bg-light">
         <div class="container">
+            <h2 class="text-center mb-5">Key Features</h2>
             <div class="row">
-                <div class="col-md-4">
-                    <div class="card feature-card h-100">
+                <div class="col-md-4 mb-4">
+                    <div class="card feature-card">
                         <div class="card-body text-center">
                             <h3>📊</h3>
-                            <h5 class="card-title">Solar Calculator</h5>
-                            <p class="card-text">Calculate solar energy potential for any location in Nigeria. Get personalized estimates for energy production and cost savings.</p>
+                            <h5 class="card-title">AI-Powered Calculator</h5>
+                            <p class="card-text">NASA data + Nigerian climate algorithms for precise solar potential
+                                calculations.</p>
                             <a href="/calculator" class="btn btn-primary">Try Calculator</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card feature-card h-100">
+                <div class="col-md-4 mb-4">
+                    <div class="card feature-card">
                         <div class="card-body text-center">
                             <h3>📋</h3>
-                            <h5 class="card-title">Projects Dashboard</h5>
-                            <p class="card-text">Manage and track renewable energy projects across Nigeria. Monitor capacity, costs, and project status in real-time.</p>
+                            <h5 class="card-title">Project Management</h5>
+                            <p class="card-text">Track solar projects across campus with real-time analytics and ROI
+                                calculations.</p>
                             <a href="/projects" class="btn btn-primary">View Projects</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card feature-card h-100">
+                <div class="col-md-4 mb-4">
+                    <div class="card feature-card">
                         <div class="card-body text-center">
                             <h3>🌱</h3>
-                            <h5 class="card-title">Environmental Impact</h5>
-                            <p class="card-text">Track carbon offset, equivalent trees planted, and environmental benefits of solar energy adoption in Nigeria.</p>
-                            <a href="/calculator" class="btn btn-primary">See Impact</a>
+                            <h5 class="card-title">Environmental Analytics</h5>
+                            <p class="card-text">Monitor carbon offset, energy savings, and environmental impact
+                                metrics.</p>
+                            <a href="/analytics" class="btn btn-primary">See Analytics</a>
                         </div>
                     </div>
                 </div>
@@ -133,22 +192,22 @@
         </div>
     </section>
 
-    <!-- Quick Stats Section -->
-    <section class="py-5 bg-light">
+    <!-- Data-Driven Section -->
+    <section class="py-5">
         <div class="container">
-            <h2 class="text-center mb-5">Why Solar Energy for Nigeria?</h2>
+            <h2 class="text-center mb-5">Data-Driven Solar Assessment</h2>
             <div class="row text-center">
                 <div class="col-md-3 mb-4">
-                    <h3 class="text-success">5.5 kWh/m²/day</h3>
-                    <p>Average Solar Irradiance</p>
+                    <h3 class="text-success">4.5-5.7 kWh/m²/day</h3>
+                    <p>Nigeria Solar Irradiance</p>
                 </div>
                 <div class="col-md-3 mb-4">
-                    <h3 class="text-success">₦0.15/kWh</h3>
-                    <p>Cost of Solar vs Grid</p>
+                    <h3 class="text-success">₦225/kWh</h3>
+                    <p>Grid Electricity Cost</p>
                 </div>
                 <div class="col-md-3 mb-4">
                     <h3 class="text-success">25+ Years</h3>
-                    <p>Solar Panel Lifespan</p>
+                    <p>System Lifespan</p>
                 </div>
                 <div class="col-md-3 mb-4">
                     <h3 class="text-success">0.61 kg/kWh</h3>
@@ -159,13 +218,15 @@
     </section>
 
     <!-- Call to Action -->
-    <section class="py-5">
+    <section class="py-5 bg-light">
         <div class="container text-center">
-            <h2 class="mb-4">Ready to Harness Solar Power?</h2>
-            <p class="lead mb-4">Join the renewable energy revolution in Nigeria. Calculate your solar potential and start saving today.</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a href="/calculator" class="btn btn-primary btn-lg">Start Calculation</a>
-                <a href="/projects" class="btn btn-outline-primary btn-lg">View Projects</a>
+            <h2 class="mb-4">Ready to Power Your Campus with Solar?</h2>
+            <p class="lead mb-4">Join the campus renewable energy revolution. Calculate your solar potential and start
+                saving today.</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/calculator" class="btn btn-primary btn-lg">Calculate Solar Potential</a>
+                <a href="/register" class="btn btn-outline-primary btn-lg">Create Account</a>
+                <a href="/projects" class="btn btn-outline-primary btn-lg">View Demo Projects</a>
             </div>
         </div>
     </section>
@@ -173,12 +234,31 @@
     <!-- Footer -->
     <footer class="bg-dark text-white py-4">
         <div class="container text-center">
-            <p>&copy; 2025 SEEWA - Solar Energy Estimation & Awareness. Empowering Nigeria with clean energy.</p>
+            <p>&copy; 2025 SEEWA - Solar Energy Estimation & Awareness. Empowering Nigerian Campuses with Clean Energy.
+            </p>
+            <small>Built for Educational Institutions & Sustainable Development</small>
         </div>
     </footer>
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simple error handling for demonstration
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('SEEWA Campus Solar Calculator loaded successfully');
 
+            // Add any interactive features here
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                card.addEventListener('click', function () {
+                    this.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+        });
+    </script>
 </body>
+
 </html>
