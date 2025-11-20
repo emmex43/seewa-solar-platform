@@ -140,8 +140,8 @@ NIGERIA_MONTHLY_FACTORS = {
 }
 
 # Enhanced Nigeria-specific data
-NIGERIA_ELECTRICITY_COST = 0.15      # USD/kWh (average)
-NIGERIA_ELECTRICITY_COST_NAIRA = 225  # ₦/kWh (approx 1500 ₦/$)
+NIGERIA_ELECTRICITY_COST = 0.1445     # USD/kWh (average)
+NIGERIA_ELECTRICITY_COST_NAIRA = 209.5  # ₦/kWh (approx 1450.07 ₦/$)
 NIGERIA_EMISSION_FACTOR = 0.61       # kg CO2/kWh (Nigeria grid)
 # kWh/year (more accurate Nigerian average)
 AVERAGE_HOME_CONSUMPTION = 2400
@@ -267,7 +267,7 @@ class SolarEstimator:
 
         return total_loss
 
-    # ... rest of your SolarEstimator methods remain the same ...
+    # Solar Estimation Calculations
 
     def calculate_tilt_factor(self, tilt_angle, optimal_tilt=15):
         """Calculate performance factor based on tilt angle"""
@@ -363,7 +363,7 @@ class SolarEstimator:
         }
 
 
-# Initialize the enhanced solar estimator
+# Initialize the solar estimator
 solar_estimator = SolarEstimator()
 
 
@@ -592,6 +592,7 @@ def solar_estimate():
     except Exception as e:
         logger.error(f"Solar estimation error: {e}")
         return jsonify({'success': False, 'error': str(e)}), 400
+
 # ANALYTICS API ENDPOINTS
 
 
@@ -643,9 +644,9 @@ def nigerian_cities():
         {'name': 'Maiduguri', 'lat': 11.8333, 'lng': 13.1500}
     ]
     return jsonify(cities)
-# ======== STEP 5: ADD THESE NEW ENDPOINTS HERE ========
 
 
+#   Advanced Solar Estimation
 @app.route("/api/advanced-solar", methods=["POST"])
 @login_required
 def advanced_solar_analysis():
