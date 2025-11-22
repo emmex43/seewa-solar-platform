@@ -58,7 +58,7 @@
     </nav>
 
     <div class="container mt-4">
-        <h1 class="mb-4">Solar Energy Calculator - Nigeria</h1>
+        <h1 class="mb-4">Solar Energy Analysis - Nigeria</h1>
         <p class="lead">Calculate the solar potential and benefits for any location in Nigeria</p>
 
         <div class="row">
@@ -118,28 +118,6 @@
                                     <option value="0.20">Premium Panels (20%)</option>
                                     <option value="0.22">High Efficiency (22%)</option>
                                 </select>
-                            </div>
-                            <!-- Add this after the Panel Efficiency section -->
-                            <div class="mb-3">
-                                <label class="form-label">Panel Tilt Angle (degrees)</label>
-                                <input type="number" class="form-control" id="panelTilt" value="15" min="0" max="90"
-                                    step="1">
-                                <small class="text-muted">Optimal for Nigeria: 10-20°</small>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Include Battery Storage?</label>
-                                <select class="form-select" id="hasBattery">
-                                    <option value="false">No Battery</option>
-                                    <option value="true">With Battery Backup</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">System Cost (USD - Optional)</label>
-                                <input type="number" class="form-control" id="systemCost"
-                                    placeholder="Enter system cost for ROI analysis">
-                                <small class="text-muted">Leave empty for energy-only calculation</small>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100" id="calculateBtn">
@@ -357,7 +335,7 @@
                     <div class="col-md-3">
                         <div class="text-center p-3 border rounded">
                             <h4 class="text-success">${benefits.carbon_offset_tons || 0}</h4>
-                            <small>Tons CO₂ Offset/Year</small>
+                            <small>Tons of CO₂ Offset/Year</small>
                         </div>
                     </div>
                     <div class="col-md-3">

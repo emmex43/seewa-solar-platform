@@ -201,17 +201,19 @@
             renderImpactChart(userStats) {
                 const ctx = document.getElementById('impactChart').getContext('2d');
 
-                // Estimated impact based on user activity
-                const estimatedEnergy = userStats.solar_calculations * 5000; // 5MW per calculation
-                const estimatedSavings = estimatedEnergy * 0.1445; // $0.1445 per kWh
-                const estimatedCarbon = (estimatedEnergy * 0.61) / 1000; // tons CO2
+                // ✅ USE REAL DATA instead of fake multipliers
+                const realEnergy = userStats.total_energy_kwh || 0;
+                const realSavings = userStats.total_savings_naira || 0;
+                const realCarbon = userStats.total_carbon_tons || 0;
+
+                console.log('Real Impact Data:', { realEnergy, realSavings, realCarbon });
 
                 const impactData = {
-                    labels: ['Energy (kWh)', 'Savings ($)', 'CO2 Offset (tons)'],
+                    labels: ['Energy (kWh)', 'Savings (₦)', 'CO₂ Offset (tons)'],
                     datasets: [{
-                        label: 'Estimated Impact',
-                        data: [estimatedEnergy, estimatedSavings, estimatedCarbon],
-                        backgroundColor: '#2E8B57'
+                        label: 'Your Actual Impact',
+                        data: [realEnergy, realSavings, realCarbon],
+                        backgroundColor: ['#2E8B57', '#3CB371', '#20B2AA']
                     }]
                 };
 
@@ -225,30 +227,38 @@
                             y: {
                                 beginAtZero: true
                             }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Based on Your Actual Calculations'
+                            }
                         }
                     }
                 });
             }
-
             renderRecentActivity(activities) {
                 const tbody = document.getElementById('activityTableBody');
                 tbody.innerHTML = '';
 
                 activities.forEach(activity => {
                     const row = document.createElement('tr');
-
                     const eventName = this.formatEventType(activity.event_type);
-                    const timestamp = new Date(activity.created_at).toLocaleString();
+
+                    // Add 1 hour to UTC time
+                    const utcDate = new Date(activity.created_at);
+                    const localDate = new Date(utcDate.getTime() + (60 * 60 * 1000)); // Add 1 hour
+
+                    const timestamp = localDate.toLocaleString();
 
                     row.innerHTML = `
-                        <td>${eventName}</td>
-                        <td>${activity.data || 'No details'}</td>
-                        <td>${timestamp}</td>
-                    `;
+            <td>${eventName}</td>
+            <td>${activity.data || 'No details'}</td>
+            <td>${timestamp}</td>
+        `;
                     tbody.appendChild(row);
                 });
             }
-
             formatEventType(eventType) {
                 const eventMap = {
                     'user_login': 'User Login',
